@@ -1,4 +1,3 @@
-from meta import *
 from drafter import *
 from dataclasses import dataclass
 import textwrap3
