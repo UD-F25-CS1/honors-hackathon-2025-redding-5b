@@ -1,6 +1,5 @@
 from drafter import *
 from dataclasses import dataclass
-import re
 from gtts import gTTS
 import os
 import pygame
