@@ -1,5 +1,12 @@
 from drafter import *
 from dataclasses import dataclass
+
+set_site_information(
+    author=["asuplick@udel.edu", "benbaker@udel.edu"],
+    description="""Helps users with disabilities use internet tools
+    more accessibly.""",
+    links=[https://github.com/UD-F25-CS1/honors-hackathon-2025-redding-5b]
+)
 set_website_style("none")
 add_website_css("""
 body {
