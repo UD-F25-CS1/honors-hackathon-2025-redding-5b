@@ -18,10 +18,8 @@ body {
 @dataclass
 class State:
     blind:bool
-    deaf:bool
     language_spoken:str
     language_wanted:str
-    colorblind:bool
     dyslexic:bool
     poor_vision:bool
     mobility_issues:bool
@@ -103,8 +101,6 @@ def start(state: State) -> Page:
         content=[
             Text("Click each box that applies to you:"),
             Row(CheckBox(name="blind"), Text("Blind / Low Vision")),
-            Row(CheckBox(name="deaf"), Text("Deaf / Hard of Hearing")),
-            Row(CheckBox(name="colorblind"), Text("Colorblindness")),
             Row(CheckBox(name="dyslexic"), Text("Dyslexia")),
             Row(CheckBox(name="poor_vision"), Text("Poor Vision (not fully blind)")),
             Row(CheckBox(name="mobility_issues"), Text("Mobility / Motor Difficulties")),
@@ -119,20 +115,14 @@ def start(state: State) -> Page:
     )
 
 @route
-def options(state:State, blind:bool, deaf:bool, colorblind:bool, dyslexic:bool, poor_vision:bool, mobility_issues:bool)->Page:
+def options(state:State, blind:bool, dyslexic:bool, poor_vision:bool, mobility_issues:bool)->Page:
     state.blind = blind
-    state.deaf = deaf
-    state.colorblind = colorblind
     state.dyslexic = dyslexic
     state.poor_vision = poor_vision
     state.mobility_issues = mobility_issues
     content = ["What would you like help with today?"]
     if state.blind:
         content.append(Button(text = "Text to voice (blind)", url = "/text_to_voice"))
-    if state.deaf:
-        content.append(Button(text = "Autocaptioning (deaf)", url = "/auto_caption"))
-    if state.colorblind:
-        content.append(Button(text = "Color deciphering (colorblind)", url = "/colors"))
     if state.dyslexic:
         content.append(Button(text = "Text readability help (dyslexic)", url = "/dyslexia_text"))
     if state.poor_vision:
@@ -154,30 +144,7 @@ def read_aloud(state:State, text:str) -> Page:
     text_to_speach(text)
     return text_to_voice(state)
 
-@route
-def auto_caption(state:State)-> Page:
-    return Page(state = state, content = [
-        Text("Upload a video to be captioned"),
-        FileUpload(name = "file", accept = ["MP4", "MOV", "WMV", "MKV"]),
-        Button(text = "Caption", url = "/caption"),
-        Button(text = "Back", url = "/text_to_voice")])
 
-@route
-def caption(state: State, file: str) -> Page:
-    pass
-
-
-@route
-def colors(state:State) -> Page:
-    return Page(state = state, content = [
-        Text("Upload a picture to be color analyzed"),
-        FileUpload(name = "file"),
-        Button(text = "Analyze", url = "/color_analyze"),
-        Button(text = "Home", url = "/start")])
-
-@route
-def color_analyze(state:State, file:str)->Page:
-    pass
 
 @route
 def dyslexia_text(state:State)->Page:
@@ -361,7 +328,7 @@ def translation2(state:State,key:str,text:str)->Page:
                          Button('Return','/translation')])
 
 
-start_server(State(False, False, "", "", False, False, False, False, False, ""))
+start_server(State(False, False, "", "", False, False, False, ""))
     
         
 
