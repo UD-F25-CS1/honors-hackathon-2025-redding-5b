@@ -1,9 +1,5 @@
 from drafter import *
 from dataclasses import dataclass
-from gtts import gTTS
-import os
-import pygame
-from deep_translator import GoogleTranslator
 set_website_style("none")
 add_website_css("""
 body {
@@ -12,36 +8,15 @@ body {
 }
 """)
 
-
+hide_debug_information()
 
 @dataclass
 class State:
-    blind:bool
-    language_spoken:str
-    language_wanted:str
     dyslexic:bool
     poor_vision:bool
     mobility_issues:bool
     allergies:bool
     keyboard_text:str
-
-
-def translate(words:str,end:str)->str:
-    translated=GoogleTranslator(source='auto', target=end).translate(words)
-    return translated
-
-
-
-def text_to_speach(words:str)->str:
-    if words:
-        tts = gTTS(text=words, lang='en', slow=False)
-        pygame.mixer.init()
-        audio_file = "output.mp3"
-        tts.save(audio_file)
-        sound = pygame.mixer.Sound(audio_file)
-        channel = sound.play()
-        os.remove(audio_file)
-    return 'done'
 
 
 def make_dyslexia_friendly(text: str) -> str:
@@ -99,29 +74,22 @@ def start(state: State) -> Page:
         state=state,
         content=[
             Text("Click each box that applies to you:"),
-            Row(CheckBox(name="blind"), Text("Blind / Low Vision")),
             Row(CheckBox(name="dyslexic"), Text("Dyslexia")),
             Row(CheckBox(name="poor_vision"), Text("Poor Vision (not fully blind)")),
             Row(CheckBox(name="mobility_issues"), Text("Mobility / Motor Difficulties")),
             Button(
                 text="Click here for assistance with creating a disability, medication, or allergy card",
                 url="/card_maker"),
-            Button(
-                text="Click here for translating services",
-                url="/translation"),
             Button(text = "Next", url = "/options")
         ]
     )
 
 @route
-def options(state:State, blind:bool, dyslexic:bool, poor_vision:bool, mobility_issues:bool)->Page:
-    state.blind = blind
+def options(state:State, dyslexic:bool, poor_vision:bool, mobility_issues:bool)->Page:
     state.dyslexic = dyslexic
     state.poor_vision = poor_vision
     state.mobility_issues = mobility_issues
     content = ["What would you like help with today?"]
-    if state.blind:
-        content.append(Button(text = "Text to voice (blind)", url = "/text_to_voice"))
     if state.dyslexic:
         content.append(Button(text = "Text readability help (dyslexic)", url = "/dyslexia_text"))
     if state.poor_vision:
@@ -129,20 +97,6 @@ def options(state:State, blind:bool, dyslexic:bool, poor_vision:bool, mobility_i
     if state.mobility_issues:
         content.append(Button(text = "Button keyboard(mobility limitations)", url = "/keyboard"))
     return Page(state = state, content = content)
-
-@route
-def text_to_voice(state:State)->Page:
-    return Page(state = state, content = [
-        Text("Copy and paste text to be read aloud"),
-        TextArea(name = "text", default_value = "Paste here"),
-        Button(text = "Read", url = "/read_aloud"),
-        Button(text = "Home", url = "/start")])
-
-@route
-def read_aloud(state:State, text:str) -> Page:
-    text_to_speach(text)
-    return text_to_voice(state)
-
 
 
 @route
@@ -311,24 +265,9 @@ def card_generator(state: State, name: str, emergency_contact: str, allergies: s
     ]
 
     return Page(state=state, content=card_content)
-@route
-def translation(state:State)->Page:
-    return Page(state,
-                content=[Text('Enter text  to translate into'),
-                         Text('common languages: English-en, Spanish-es, German-de, French-fr, Italian-it'),
-                         Row(TextBox('text','Enter Text Here'),
-                             TextBox('key','Enter 2 Letter Key')),
-                         Button('Translate','/translation2'),
-                         Button('Go Home','/start')])
-@route
-def translation2(state:State,key:str,text:str)->Page:
-    translated=translate(text,key)
-    return Page(state,
-                content=[Text(translated),
-                         Button('Return','/translation')])
 
 
-start_server(State(False, False, "", "", False, False, False, ""))
+start_server(State(False, False, False, False, ""))
     
         
 
