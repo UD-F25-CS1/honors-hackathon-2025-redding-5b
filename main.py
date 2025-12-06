@@ -7,7 +7,7 @@ set_site_information(
     more accessibly.""",
     sources = ["Drafter documentation"],
     planning = ["IMG_2747.jpeg"],
-    links=["https://github.com/UD-F25-CS1/honors-hackathon-2025-redding-5b"]
+    links=["https://github.com/UD-F25-CS1/honors-hackathon-2025-redding-5b", "https://youtu.be/abc123"]
 )
 set_website_style("none")
 add_website_css("""
