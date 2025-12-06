@@ -178,7 +178,8 @@ def poor_vision_text(state:State)->Page:
     return Page(state = state, content = [
         Text("Copy and paste text to be put into a more readable format"),
         TextArea(name = "text", default_value = "Paste here"),
-        Button(text = "Next", url = "/poor_vision_adaptation")])
+        Button(text = "Next", url = "/poor_vision_adaptation"),
+        Button(text = "Home", url = "/start")])
 
 
 
