@@ -3,7 +3,7 @@ from dataclasses import dataclass
 
 set_site_information(
     author=["asuplick@udel.edu", "benbaker@udel.edu"],
-    description="""Helps users with disabilities use internet tools
+    description = """Helps users with disabilities use internet tools
     more accessibly.""",
     sources = ["Drafter documentation"],
     planning = ["IMG_2747.jpeg"],
