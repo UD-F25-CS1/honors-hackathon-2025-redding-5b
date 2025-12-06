@@ -6,7 +6,7 @@ set_site_information(
     description="""Helps users with disabilities use internet tools
     more accessibly.""",
     sources = ["Drafter documentation"],
-    planning = ["IMG_2747.jpeg"]
+    planning = ["IMG_2747.jpeg"],
     links=["https://github.com/UD-F25-CS1/honors-hackathon-2025-redding-5b"]
 )
 set_website_style("none")
