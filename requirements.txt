@@ -1,0 +1,4 @@
+drafter
+gTTS
+pygame
+deep-translator
