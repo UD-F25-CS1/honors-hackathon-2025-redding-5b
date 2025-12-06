@@ -1,11 +1,19 @@
 from drafter import *
 from dataclasses import dataclass
-import textwrap3
 import re
 from gtts import gTTS
 import os
 import pygame
 from deep_translator import GoogleTranslator
+set_website_style("none")
+add_website_css("""
+body {
+    background-color: creme;
+    font-size: 30px;
+}
+""")
+
+
 
 @dataclass
 class State:
@@ -22,9 +30,6 @@ class State:
 
 
 def translate(words:str,end:str)->str:
-    """
-    Helper function for the translation route.
-    """
     translated=GoogleTranslator(source='auto', target=end).translate(words)
     return translated
 
@@ -44,25 +49,28 @@ def text_to_speach(words:str)->str:
 
 def make_dyslexia_friendly(text: str) -> str:
     """
-    Applies simple dyslexia-friendly formatting:
+    Applies simple dyslexia-friendly formatting without external libraries:
     - breaks long lines
     - increases spacing
     - bolds first word of each sentence
     - adds spacing between paragraphs
-    
-    Args: text (str) - The original text
-    Returns: str - The translated text
     """
+    
+    temp_text = text.strip()
+    for punct in ['.', '!', '?']:
+        temp_text = temp_text.replace(f"{punct} ", f"{punct}|||")
 
-    sentences = re.split(r'(?<=[.!?]) +', text.strip())
+    sentences = temp_text.split("|||")
 
     new_sentences = []
     for s in sentences:
-        if not s.strip():
+        s = s.strip() 
+        if not s:
             continue
+
         parts = s.split(" ", 1)
         if len(parts) > 1:
-            s = f"*{parts[0]}* " + parts[1]
+            s = f"*{parts[0]}* {parts[1]}"
         else:
             s = f"*{s}*"
 
@@ -70,42 +78,13 @@ def make_dyslexia_friendly(text: str) -> str:
         grouped = []
         for i in range(0, len(words), 8):
             grouped.append(" ".join(words[i:i+8]))
+        
         s = "\n".join(grouped)
-
         new_sentences.append(s)
 
     return "\n\n".join(new_sentences)
 
-def make_large_print(text: str) -> str:
-    """
-    Simple formatting aimed at improving readability for people with poor vision:
-    - Shorter line lengths
-    - Extra spacing between lines
-    - capatilized headings if detected
-    - Double-spacing between paragraphs
-    - Inserts line breaks before long sentences
-    
-    Args: text (str) - The original text
-    Returns: str - The transformed text
-    """
 
-    cleaned = text.strip()
-
-    wrapped = textwrap3.fill(cleaned, width=45)
-
-    paragraphs = wrapped.split("\n")
-    spaced = "\n\n".join(paragraphs)
-
-    final_lines = []
-    sentences = spaced.replace("\n", " ").split(". ")
-    for i, s in enumerate(sentences):
-        final_lines.append(s.strip())
-        if i % 2 == 1:  
-            final_lines.append("")
-
-    result = "\n".join(final_lines)
-
-    return result.strip()
 
 @route
 def index(state:State) -> Page:
@@ -223,7 +202,7 @@ def dyslexia_adaptation(state: State, text: str) -> Page:
         state=state,
         content=[
             Text("Dyslexia-Friendly Output"),
-            TextArea(name="adapted_text", default_value=adapted, rows=12),
+            Text(adapted),
             Button(text="Back", url="/dyslexia_text")
         ]
     )
@@ -247,17 +226,13 @@ def poor_vision_adaptation(state: State, text: str) -> Page:
     if not text or text.strip().lower() == "paste here":
         adapted = "No text was provided."
     else:
-        adapted = make_large_print(text)
+        adapted = text
 
     return Page(
         state=state,
         content=[
             Text("Large-Print / High-Visibility Output"),
-            TextArea(
-                name="adapted_text",
-                default_value=adapted,
-                rows=12,
-            ),
+            float_right(change_text_size(Text(adapted),'50px')),
             Button(text="Back", url="/poor_vision_text")
         ]
     )
@@ -388,3 +363,8 @@ def translation2(state:State,key:str,text:str)->Page:
 
 start_server(State(False, False, "", "", False, False, False, False, False, ""))
     
+        
+
+
+
+                
